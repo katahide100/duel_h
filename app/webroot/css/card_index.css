@@ -1,8 +1,8 @@
 @charset "UTF-8";
 
 body {
-	font-family: "メイリオ","Meiryo","ヒラギノ角ゴ Pro W3","Hiragino Kaku Gothic Pro","ＭＳ ゴシック","Osaka",sans-serif;
-	line-height: 1.8;
+	#font-family: "メイリオ","Meiryo","ヒラギノ角ゴ Pro W3","Hiragino Kaku Gothic Pro","ＭＳ ゴシック","Osaka",sans-serif;
+	#line-height: 1.8;
 }
 
 .section {
