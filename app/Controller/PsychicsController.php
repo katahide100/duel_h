@@ -12,6 +12,11 @@ public $uses = array('Psychic','Card');
  * @return void
  */
 	public function index() {
+		// カードidではなく、カード名を一覧に表示させたいため、カードテーブルとjoinする必要がある。
+		//$options['fields'] = array('Card.id', 'Card.name', 'Card.name');
+        //$options['joins'][] = array('type' => 'inner', 'table' => 'cards', 'alias' => 'Card', 'conditions' => 'psychics.psychic_l = Card.id');
+        //$options['order'] = 'Pref.id';
+        //$this->Psychic->find('all', $options);
 		$this->Psychic->recursive = 0;
 		$this->set('psychics', $this->paginate());
 	}
