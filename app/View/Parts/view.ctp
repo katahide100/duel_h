@@ -1,4 +1,4 @@
-﻿<div class="parts view">
+<div class="parts view">
 <h2><?php  echo __('パート管理'); ?></h2>
 	<dl>
 		<dt><?php echo __('Id'); ?></dt>
@@ -21,13 +21,7 @@
 		<li><?php echo $this->Html->link(__('新規パート'), array('action' => 'add')); ?> </li>
 		<li><?php echo $this->Form->postLink(__('パート削除'), array('action' => 'delete', $part['Part']['id']), null, __('Are you sure you want to delete # %s?', $part['Part']['id'])); ?> </li>
 	</ul><br>
-	<h3><?php echo __('LINK'); ?></h3>
-	<ul>
-		<li><?php echo $this->Html->link(__('パック一覧'), array('controller' => 'packs', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('カード一覧'), array('controller' => 'cards', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('紐付け一覧'), array('controller' => 'links', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('ゴッドリンク一覧'), array('controller' => 'godlinks', 'action' => 'index')); ?> </li>
-	</ul>
+	<?php echo $this->element('menu'); ?>
 </div>
 <div class="related">
 	<h3><?php echo __('このパートに含まれるパック'); ?></h3>
