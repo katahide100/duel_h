@@ -1,4 +1,4 @@
-﻿<div class="packs form">
+<div class="packs form">
 <?php echo $this->Form->create('Pack'); ?>
 	<fieldset>
 		<legend><?php echo __('新規パック'); ?></legend>
@@ -14,11 +14,5 @@
 	<ul>
 		<li><?php echo $this->Html->link(__('パック一覧'), array('action' => 'index')); ?></li>
 	</ul><br>
-	<h3><?php echo __('LINK'); ?></h3>
-	<ul>
-		<li><?php echo $this->Html->link(__('パート一覧'), array('controller' => 'parts', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('カード一覧'), array('controller' => 'cards', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('紐付け一覧'), array('controller' => 'links', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('ゴッドリンク一覧'), array('controller' => 'godlinks', 'action' => 'index')); ?> </li>
-	</ul>
+	<?php echo $this->element('menu'); ?>
 </div>
