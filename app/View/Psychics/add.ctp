@@ -154,5 +154,6 @@ div#tabchangeContents div.tabchangeBox p.sample2 img {
 	<ul>
 
 		<li><?php echo $this->Html->link(__('サイキック一覧'), array('action' => 'index')); ?></li>
-	</ul>
+	</ul><br>
+	<?php echo $this->element('menu'); ?>
 </div>

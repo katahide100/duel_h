@@ -1,4 +1,4 @@
-﻿<div class="godlinks index">
+<div class="godlinks index">
 	<h2><?php echo __('ゴッドリンク管理'); ?></h2>
 	<table cellpadding="0" cellspacing="0">
 	<tr>
@@ -40,11 +40,5 @@
 		<li><?php echo $this->Html->link(__('新規ゴッドリンク'), array('action' => 'add')); ?></li>
 		<li><?php echo $this->Html->link(__('ゴッドリンクセーブ'), array('action' => 'save')); ?></li>
 	</ul><br>
-	<h3><?php echo __('LINK'); ?></h3>
-	<ul>
-		<li><?php echo $this->Html->link(__('パート一覧'), array('controller' => 'parts', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('パック一覧'), array('controller' => 'packs', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('カード一覧'), array('controller' => 'cards', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('紐付け一覧'), array('controller' => 'links', 'action' => 'index')); ?> </li>
-	</ul>
+	<?php echo $this->element('menu'); ?>
 </div>
