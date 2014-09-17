@@ -25,5 +25,6 @@
 		<li><?php echo $this->Form->postLink(__('Delete Psychic'), array('action' => 'delete', $psychic['Psychic']['id']), null, __('Are you sure you want to delete # %s?', $psychic['Psychic']['id'])); ?> </li>
 		<li><?php echo $this->Html->link(__('List Psychics'), array('action' => 'index')); ?> </li>
 		<li><?php echo $this->Html->link(__('New Psychic'), array('action' => 'add')); ?> </li>
-	</ul>
+	</ul><br>
+	<?php echo $this->element('menu'); ?>
 </div>

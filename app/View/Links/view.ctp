@@ -1,4 +1,4 @@
-﻿<div class="links view">
+<div class="links view">
 <h2><?php  echo __('紐付け管理'); ?></h2>
 	<dl>
 		<dt><?php echo __('Id'); ?></dt>
@@ -26,11 +26,5 @@
 		<li><?php echo $this->Html->link(__('新規紐付け'), array('action' => 'add')); ?> </li>
 		<li><?php echo $this->Form->postLink(__('紐付け削除'), array('action' => 'delete', $link['Link']['id']), null, __('Are you sure you want to delete # %s?', $link['Link']['id'])); ?> </li>
 	</ul><br>
-	<h3><?php echo __('LINK'); ?></h3>
-	<ul>
-		<li><?php echo $this->Html->link(__('パート一覧'), array('controller' => 'parts', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('パック一覧'), array('controller' => 'packs', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('カード一覧'), array('controller' => 'cards', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('ゴッドリンク一覧'), array('controller' => 'godlinks', 'action' => 'index')); ?> </li>
-	</ul>
+	<?php echo $this->element('menu'); ?>
 </div>

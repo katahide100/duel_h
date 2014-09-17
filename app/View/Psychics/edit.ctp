@@ -16,5 +16,6 @@
 
 		<li><?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $this->Form->value('Psychic.id')), null, __('Are you sure you want to delete # %s?', $this->Form->value('Psychic.id'))); ?></li>
 		<li><?php echo $this->Html->link(__('List Psychics'), array('action' => 'index')); ?></li>
-	</ul>
+	</ul><br>
+	<?php echo $this->element('menu'); ?>
 </div>

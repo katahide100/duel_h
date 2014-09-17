@@ -33,7 +33,7 @@ public $uses = array('Psychic','Card');
 			throw new NotFoundException(__('Invalid Psychic'));
 		}
 		$options = array('conditions' => array('Psychic.' . $this->Psychic->primaryKey => $id));
-		$this->set('Psychic', $this->Psychic->find('first', $options));
+		$this->set('psychic', $this->Psychic->find('first', $options));
 	}
 
 /**
