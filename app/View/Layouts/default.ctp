@@ -72,6 +72,13 @@ width: 250px;
 font-size:large;
 }
 
+.floatLeft{
+float: left;
+}
+.floatRight{
+float: right;
+}
+
 -->
 </STYLE>
 </head>
@@ -79,7 +86,10 @@ font-size:large;
 	<div id="container">
 	
 		<div id="header">
-
+			<div class="floatLeft">
+			<h4>デュエルマスターズ対戦CGI カード管理システム</h4>
+			</div>
+			<div class="floatRight">
 			<h1>
 				<?php //echo $this->Html->link($cakeDescription, 'http://cakephp.org'); ?>
        			<?php echo $this->Html->link(__('ログアウト'),
@@ -88,6 +98,7 @@ font-size:large;
            		'action'     => 'logout'
          		), array('escape'=>false)); ?>
  			</h1>
+ 			</div>
 
             
 		</div>
