@@ -120,7 +120,7 @@ div#tabchangeContents div.tabchangeBox p.sample2 img {
 		//echo $this->Form->input('psychic_l');
 	?>
 	</fieldset>
-<?php echo $this->Form->end(__('Submit')); ?>
+<?php echo $this->Form->end(__('登録')); ?>
 </div>
 
 <div id="box2" class="tabchangeBox">
@@ -142,7 +142,7 @@ div#tabchangeContents div.tabchangeBox p.sample2 img {
 		//echo $this->Form->input('psychic_l');
 	?>
 	</fieldset>
-<?php echo $this->Form->end(__('Submit')); ?>
+<?php echo $this->Form->end(__('登録')); ?>
 </div>
 </div>
 </section>
@@ -150,7 +150,7 @@ div#tabchangeContents div.tabchangeBox p.sample2 img {
 </div>
 
 <div class="actions">
-	<h3><?php echo __('Actions'); ?></h3>
+	<h3><?php echo __('サイキック'); ?></h3>
 	<ul>
 
 		<li><?php echo $this->Html->link(__('サイキック一覧'), array('action' => 'index')); ?></li>

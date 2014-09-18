@@ -1,5 +1,5 @@
 <div class="psychics index">
-	<h2><?php echo __('サイキック一覧'); ?></h2>
+	<h2><?php echo __('サイキック管理'); ?></h2>
 	<table cellpadding="0" cellspacing="0">
 	<tr>
 			<th><?php echo $this->Paginator->sort('id'); ?></th>
