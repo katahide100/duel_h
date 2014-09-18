@@ -36,6 +36,7 @@
 	<h3><?php echo __('パート'); ?></h3>
 	<ul>
 		<li><?php echo $this->Html->link(__('新規パート'), array('action' => 'add')); ?></li>
+		<li><?php echo $this->Html->link(__('セーブ'), array('action' => 'save')); ?></li>
 	</ul><br>
 	<?php echo $this->element('menu'); ?>
 </div>
