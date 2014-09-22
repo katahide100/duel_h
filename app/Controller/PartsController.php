@@ -308,7 +308,8 @@ public $uses = array('Part','Pack','Link','Card','Psychic');
 		$str = '';
 		$strNm = '';
 		// 一行ごとに処理
-		while($data = fgetcsv($fp)){
+		while($line = fgets($fp)){
+			$data = explode(',',$line);
 			$str .= '$order_symbol{\''.$data[0].'\'}	= \''.$data[2].'\';'."\n";
 			$str .= '$order_color{\''.$data[0].'\'}	= \'#0000ff\';'."\n";
 			$str .= '$order_text{\''.$data[0].'\'}	= \''.$data[1].'\';'."\n\n";
