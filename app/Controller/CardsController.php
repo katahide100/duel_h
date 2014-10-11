@@ -33,7 +33,7 @@ class CardsController extends AppController {
 		while($i <= 0){
 		
 		//if($fp = fopen("http://kyusyu.me/kataoka.hide/cgi3/syu.txt","r")){
-		if($fp = fopen("http://duel.wktk.so/cgi3/syu.txt","r")){
+		if($fp = fopen("../../../cgi3/syu.txt","r")){
 		// 終端に達するまでループ
 		while (!feof($fp)) {
 		  // ファイルから一行読み込む
@@ -89,7 +89,7 @@ class CardsController extends AppController {
 		while($i <= 0){
 		
 		//if($fp = fopen("http://kyusyu.me/kataoka.hide/cgi3/syu.txt","r")){
-		if($fp = fopen("http://duel.wktk.so/cgi3/syu.txt","r")){
+		if($fp = fopen("../../../cgi3/syu.txt","r")){
 		$j = 0;
 		// 終端に達するまでループ
 		while (!feof($fp)) {

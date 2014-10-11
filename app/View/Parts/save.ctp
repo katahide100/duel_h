@@ -9,6 +9,7 @@
 	<p>・カード</p>
 	<p>・紐付け</p>
 	<p>・サイキック</p>
+	<p>・勲章</p>
 <?php echo $this->Form->end(__('送信')); ?>
 </div>
 <div class="actions">
