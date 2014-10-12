@@ -46,7 +46,8 @@ public $uses = array('Psychic','Card');
 	$arrPsychicSyu = array(
 							'103',
 							'145',
-							'150'
+							'150',
+							'151'
 							);
 	$strSql1 = '';
 	foreach($arrPsychicSyu as $val){
