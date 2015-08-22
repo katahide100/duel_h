@@ -5,6 +5,7 @@
 	<?php
 		echo $this->Form->input('id');
 		echo $this->Form->input('part_id');
+		echo $this->Form->input('rank',array('label' => '表示順'));
 		echo $this->Form->input('pack_name',array('label' => 'パック名'));
 	?>
 	</fieldset>

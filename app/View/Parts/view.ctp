@@ -29,6 +29,7 @@
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
 		<th><?php echo __('Id'); ?></th>
+		<th><?php echo __('表示順'); ?></th>
 		<th><?php echo __('Part Id'); ?></th>
 		<th><?php echo __('パック名'); ?></th>
 		<th class="actions"><?php echo __('Actions'); ?></th>
@@ -38,6 +39,7 @@
 		foreach ($part['Pack'] as $pack): ?>
 		<tr>
 			<td><?php echo $pack['id']; ?></td>
+			<td><?php echo $pack['rank']; ?></td>
 			<td><?php echo $pack['part_id']; ?></td>
 			<td><?php echo $pack['pack_name']; ?></td>
 			<td class="actions">

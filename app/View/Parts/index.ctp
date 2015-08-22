@@ -3,12 +3,14 @@
 	<table cellpadding="0" cellspacing="0">
 	<tr>
 			<th><?php echo $this->Paginator->sort('id'); ?></th>
+			<th><?php echo $this->Paginator->sort('rank','表示順'); ?></th>
 			<th><?php echo $this->Paginator->sort('part_name','パート名'); ?></th>
 			<th class="actions"><?php echo __('Actions'); ?></th>
 	</tr>
 	<?php foreach ($parts as $part): ?>
 	<tr>
 		<td><?php echo h($part['Part']['id']); ?>&nbsp;</td>
+		<td><?php echo h($part['Part']['rank']); ?>&nbsp;</td>
 		<td><?php echo h($part['Part']['part_name']); ?>&nbsp;</td>
 		<td class="actions">
 			<?php echo $this->Html->link(__('詳細'), array('action' => 'view', $part['Part']['id'])); ?>
