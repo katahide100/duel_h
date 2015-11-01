@@ -4,6 +4,7 @@
 		<legend><?php echo __('パート編集'); ?></legend>
 	<?php
 		echo $this->Form->input('id');
+		echo $this->Form->input('rank',array('label' => '表示順'));
 		echo $this->Form->input('part_name',array('label' => 'パート名'));
 	?>
 	</fieldset>

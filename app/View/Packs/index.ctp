@@ -3,6 +3,7 @@
 	<table cellpadding="0" cellspacing="0">
 	<tr>
 			<th><?php echo $this->Paginator->sort('id'); ?></th>
+			<th><?php echo $this->Paginator->sort('rank','表示順'); ?></th>
 			<th><?php echo $this->Paginator->sort('part_name','パート名'); ?></th>
 			<th><?php echo $this->Paginator->sort('pack_name','パック名'); ?></th>
 			<th class="actions"><?php echo __('Actions'); ?></th>
@@ -10,6 +11,7 @@
 	<?php foreach ($packs as $pack): ?>
 	<tr>
 		<td><?php echo h($pack['Pack']['id']); ?>&nbsp;</td>
+		<td><?php echo h($pack['Pack']['rank']); ?>&nbsp;</td>
 		<td>
 			<?php echo $this->Html->link($pack['Part']['part_name'], array('controller' => 'parts', 'action' => 'view', $pack['Part']['part_name'])); ?>
 		</td>

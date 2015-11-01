@@ -15,6 +15,7 @@ public $uses = array('Part','Pack','Link','Card','Psychic');
  */
 	public function index() {
 		$this->Part->recursive = 0;
+		$this->paginate = array('order' => array('rank' => 'asc'));
 		$this->set('parts', $this->paginate());
 	}
 
@@ -30,6 +31,7 @@ public $uses = array('Part','Pack','Link','Card','Psychic');
 			throw new NotFoundException(__('Invalid part'));
 		}
 		$options = array('conditions' => array('Part.' . $this->Part->primaryKey => $id));
+		$this->Part->hasMany['Pack']['order'] = array('rank' => 'asc');
 		$this->set('part', $this->Part->find('first', $options));
 	}
 
@@ -106,11 +108,11 @@ public $uses = array('Part','Pack','Link','Card','Psychic');
   public function save($id = null) {
   	
     if($this->request->is('post')){
-      $parts = $this->Part->find('all');
+      $parts = $this->Part->find('all',array('order' => array('Part.rank' => 'asc')));
       $packs = '';
       foreach($parts as $part){
         $packs .= "        <optgroup label = \"".$part['Part']['part_name']."\">\n";
-        $link_packs = $this->Pack->find('all',array('conditions' => array('part_id' => $part['Part']['id'])));
+        $link_packs = $this->Pack->find('all',array('conditions' => array('part_id' => $part['Part']['id']), 'order' => array('Pack.rank' => 'asc')));
         foreach($link_packs as $link_pack){
           $packs .= "            <option value=\"".$link_pack['Pack']['id']."\" \$selstr[".$link_pack['Pack']['id']."]>".$link_pack['Pack']['pack_name']."</option>\n";
          }

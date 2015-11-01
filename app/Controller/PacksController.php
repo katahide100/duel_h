@@ -15,6 +15,7 @@ public $uses = array('Pack','Link');
  */
 	public function index() {
 		$this->Pack->recursive = 0;
+		$this->paginate = array('order' => array('rank' => 'asc'));
 		$this->set('packs', $this->paginate());
 	}
 
