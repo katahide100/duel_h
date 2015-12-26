@@ -190,6 +190,14 @@ class PaginatorComponent extends Component {
 				$conditions, $fields, $order, $limit, $page, $recursive, $extra
 			);
 		} else {
+			if(!empty($order)){
+				foreach($order as $key => $val){
+					$tmpOrder[] = $key . ' IS NULL';
+					$tmpOrder[] = $key . ' ' . $val;
+				}
+				$order = implode(',',$tmpOrder);
+			}
+
 			$parameters = compact('conditions', 'fields', 'order', 'limit', 'page');
 			if ($recursive != $object->recursive) {
 				$parameters['recursive'] = $recursive;
