@@ -505,7 +505,7 @@ EOM
     <p class="search">
     拡張パック：
     <select name="series">
-        <option value="99"selected$selstr[99]>全種</option>
+        <option value="9999"selected$selstr[9999]>全種</option>
         
 <?php echo $packs;?>
 
