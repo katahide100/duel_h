@@ -343,6 +343,30 @@ public $uses = array('Part','Pack','Link','Card','Psychic');
          $file->close();
        }
 
+       // 種属書き込み
+       $species = $this->Specie->find('all',array(
+                                'order' => 'no'));
+       $str = "";
+       foreach($species as $val){
+         $str .= $val['Specie']['species_name']."\n";
+       }
+            /* サーバー移転による変更
+       $dir_c = ROOT;
+       */
+       $dir_c = '../../../cgi3';
+       $files_c = 'syu.txt';
+       chmod($dir_c. DS. $files_c,0777);
+       $file = new File($dir_c. DS. $files_c);
+  
+       if($file->write($str)){
+         chmod($dir_c. DS. $files_c,0644);
+         $file->close();
+         echo 'saccess';
+       } else {
+         echo 'failed';
+         $file->close();
+       }
+
 
 //function FTPupload($ftp, $remote_file, $file)
 //{
