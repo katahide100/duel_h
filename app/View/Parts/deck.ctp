@@ -34,7 +34,7 @@ if($F{'mode'} ne "cardview"){
 
 sub deck_chg {
   $P{'usedeck'} = $F{'usedeck'};
-  $P{'predeck'} = "" if $dnam[$F{'usedeck'}] ne "記録なし";
+  $P{'predeck'} = $P{'predeckp'} = $P{'predeckg'} = "" if $dnam[$F{'usedeck'}] ne "記録なし";
   $P{'c_dname'} = $P{'url'} = "";
   $selstr4[$F{'usedeck'}] = " selected";
   &pfl_write($id);
@@ -70,13 +70,15 @@ if($P{'url'} ne ""){
   print qq|ウィンドウが開かない場合は、こちらのリンクをクリックすれば記事が開きます＞<a href="$site" target="_blank">Link</a></p>\n|;
   print qq|<p>また、<a href="http://www.stannet.ne.jp/fb/dm/" target="_blank">カードキングダムのサイト</a>にはサンプルデッキ以外にも数多くのデッキが掲載されておりますので、<br>よろしければご覧ください。</p>\n|;
 }
+my $deckname = $dnam[$F{'usedeck'}] if $dnam[$F{'usedeck'}] ne "記録なし";
+$deckname = $P{'c_dname'} if $P{'c_dname'} ne "";
   print <<"EOM";
 <div align="center">
 <form action="deck.cgi" method="post" name="form">
   <input type="hidden" name="id" value="$id">
   <input type="hidden" name="pass" value="$pass">
   <input type="hidden" name="mode"value="regist">
-  <input type="text" size="20" name="deckname" value="$P{'c_dname'}">&nbsp;
+  <input type="text" size="20" name="deckname" value="$deckname">&nbsp;
   <input type="submit" value="決定">&nbsp;
   <input type="reset" value="クリア">
 </form>
@@ -291,7 +293,7 @@ sub deckmake{
     $cardno =~ s/^sel//;
     &add_card($cardno,$kaisu);
   }
- 
+
   @deck_stack = sort decksort @deck;
   @deck = @deck_stack;
   @deckp_stack = sort decksort @deckp;
@@ -568,7 +570,7 @@ EOM
     拡張パック：
     <select name="series">
         <option value="9999"selected$selstr[9999]>全種</option>
-        
+
 <?php echo $packs;?>
 
 </select>
@@ -1161,6 +1163,13 @@ sub put_ini{
   $P{'predeck'} = join(",",@deck);
   $P{'predeckp'} = join(",",@deckp);
   $P{'predeckg'} = join(",",@deckg);
+  # 空の場合はnonを入れる
+  if (!$P{'predeckp'}) {
+    $P{'predeckp'} = "non";
+  }
+  if (!$P{'predeckg'}) {
+    $P{'predeckg'} = "non";
+  }
   &pfl_write($id);
 }
 
@@ -1182,11 +1191,19 @@ sub deckread{
   @deck = $P{'predeck'} ? split(/,/,$P{'predeck'}) : $P{'usedeck'} ? split(/,/,$dcon[$P{'usedeck'}]) : ();
   # サイキック
   @deckp = $P{'predeckp'} ? split(/,/,$P{'predeckp'}) : $P{'usedeck'} ? split(/,/,$dconp[$P{'usedeck'}]) : ();
+  if ($P{'predeckp'} eq "non") {
+    # nonの場合は空をセットする
+    @deckp = ();
+  }
   # GR
   @deckg = $P{'predeckg'} ? split(/,/,$P{'predeckg'}) : $P{'usedeck'} ? split(/,/,$dcong[$P{'usedeck'}]) : ();
+  if ($P{'predeckg'} eq "non") {
+    # nonの場合は空をセットする
+    @deckg = ();
+  }
 }
 
-sub set_cookie{ 
+sub set_cookie{
   ($sec,$min,$hour,$mday,$mon,$year) = gmtime(time + 30*24*60*60);
   $gdate = sprintf("%02d\-%s\-%04d %02d:%02d:%02d", $mday, ('Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec')[$mon], $year + 1900, $hour, $min, $sec);
   $cook = "id:$F{'id'},pass:$F{'pass'},pc:$pc_chk";
