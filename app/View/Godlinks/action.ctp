@@ -1416,6 +1416,14 @@ sub psy_link {
 	undef @fsel;
 }
 
+sub gr_shoukan {
+  $F{'parea'} = 1;
+  $F{'decktop'} = "on";
+  $F{'fld'} = 4;
+
+	&move;
+}
+
 #--------------------------------------------------------
 
 sub rand_tehuda {
@@ -1695,7 +1703,6 @@ sub move {
               &s_mes("$pn[$u_side]は山札の一番上のカードをバトルゾーンに出した。");
             }
           }
-
         }
 
         &s_mes(sprintf "$pn[$u_side]%s《$c_name[$cardno]》%s！",
@@ -1904,7 +1911,6 @@ sub move {
             $deck[$u_side][0] = "";
           }
         }
-
       } else {
         $arr[$u_side][$sel[0]] = "";
       }
