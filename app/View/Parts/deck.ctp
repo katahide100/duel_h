@@ -474,7 +474,10 @@ sub pickup{
       elsif ($F{'skill'} == 27) { push @d_tmp, $i if &k_chk($i, 16); }
       elsif ($F{'skill'} == 28) { push @d_tmp, $i if &k_chk($i, 21); }
       elsif ($F{'skill'} == 29) { push @d_tmp, $i if &k_chk($i, 30); }
-      elsif ($F{'skill'} == 30) { push @d_tmp, $i if &k_chk($i, 32); }
+      elsif ($F{'skill'} == 30) { push @d_tmp, $i if &k_chk($i, 31); }
+      elsif ($F{'skill'} == 31) { push @d_tmp, $i if &k_chk($i, 32); }
+      elsif ($F{'skill'} == 32) { push @d_tmp, $i if &k_chk($i, 33); }
+      elsif ($F{'skill'} == 33) { push @d_tmp, $i if &k_chk($i, 34); }
     }
     @disp = @d_tmp;
   }
@@ -649,7 +652,10 @@ EOM
       <option value="27"$selstr3[27]>メタモーフ</option>
       <option value="28"$selstr3[28]>サイクロン</option>
       <option value="29"$selstr3[29]>ナイト・マジック</option>
-      <option value="30"$selstr3[30]>Ｑ・ブレイカー</option>
+			<option value="30"$selstr3[30]>ニンジャ・ストライク</option>
+			<option value="31"$selstr3[31]>Ｑ・ブレイカー</option>
+			<option value="32"$selstr3[32]>シールド・セイバー</option>
+			<option value="33"$selstr3[33]>シールド焼却</option>
     </select><br>
     カード名検索：<input type="text" name="sstr" size="24" value="$F{'sstr'}">&nbsp;&nbsp;
     種族名検索：<input type="text" name="sstr2" size="24" value="$F{'sstr2'}">&nbsp;&nbsp;

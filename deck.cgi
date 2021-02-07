@@ -593,7 +593,10 @@ EOM
       <option value="27"$selstr3[27]>メタモーフ</option>
       <option value="28"$selstr3[28]>サイクロン</option>
       <option value="29"$selstr3[29]>ナイト・マジック</option>
-      <option value="30"$selstr3[30]>Ｑ・ブレイカー</option>
+			<option value="30"$selstr3[30]>ニンジャ・ストライク</option>
+			<option value="31"$selstr3[31]>Ｑ・ブレイカー</option>
+			<option value="32"$selstr3[32]>シールド・セイバー</option>
+			<option value="33"$selstr3[33]>シールド焼却</option>
     </select><br>
     カード名検索：<input type="text" name="sstr" size="24" value="$F{'sstr'}">&nbsp;&nbsp;
     種族名検索：<input type="text" name="sstr2" size="24" value="$F{'sstr2'}">&nbsp;&nbsp;

@@ -7,7 +7,7 @@ App::uses('AppController', 'Controller');
  * @property Part $Part
  */
 class PartsController extends AppController {
-public $uses = array('Part','Pack','Link','Card','Psychic');
+public $uses = array('Part','Pack','Link','Card','Psychic','Specie');
 /**
  * index method
  *
