@@ -36,41 +36,8 @@ $cakeDescription = __d('cake_dev', 'CakePHP: the rapid development php framework
 		echo $this->fetch('css');
 		echo $this->fetch('script');
 	?>
-	<script language="JavaScript">
-		<!--
-
-		//Open Subwindow (http://duel.wktk.so/chat/chat.php)
-
-		function WinOpen(color,x,y,msg){
-			var Win1=window.open('http://duel.wktk.so/card_chat/chat.php','Subwin','toolbar=no,location=no,resizable=1,width='+x+',height='+y+'');
-			if(navigator.appVersion.charAt(0)>=3){Win1.focus()};
-			//Win1.document.clear();
-			//Win1.document.write("<html><title>Sub Window</title>");
-			//Win1.document.write("<body bgcolor="+color+">");
-			//Win1.document.write(msg);
-			//Win1.document.write("<p align=center><form><input type=button value='閉じる' onClick='window.close()'></form></p>");
-			//Win1.document.write("</body></html>");
-			//Win1.document.close();
-			}
-		//-->
-	</script>
 	<STYLE Type="text/css">
 <!--
-
-.chatbtn{
-height:0px;
-width:110px;
-margin-left: auto;s
-}
-
-.sample1{
-font-size:10pt;
-}
-
-.headtbl{
-width: 250px;
-font-size:large;
-}
 
 .floatLeft{
 float: left;
@@ -104,33 +71,10 @@ float: right;
 		</div>
 		
 		<div id="content">
- 			<div class="chatbtn">
- 				<form name="form1" > 
-                <input type="button" value="作成者用チャット" onClick="WinOpen('#000000','400','500','<p><font size=2 color=#FFFFFF>ボタン毎に簡単な説明文を表示できます。</font></p>')" class="sample1"> 
-            	</form><br>
-            	            <?php
-$names = array();
-foreach (file('../../../card_chat/data/sessions.dat.cgi') as $line) {
-	list(,, $name) = split("\t", rtrim($line));
-	array_push($names, $name);
-}
-echo '<p>参加者(' . count($names) . '):</p>';
-if (count($names)) {
-	echo '<ul>';
-	foreach ($names as $name)
-		echo "<li>$name</li>";
-	echo '</ul>';
-} else {
-	echo '<p>なし</p>';
-}
-?> 
-            </div>
 
 			<?php echo $this->Session->flash(); ?>
 
 			<?php echo $this->fetch('content'); ?>
-			
-
 
 		</div>
 		
