@@ -1,5 +1,20 @@
 <head>
-<?php echo $this->Html->script('http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js', array( 'inline' => false ));?>
+<?php echo $this->Html->css(
+  'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css',
+  null,
+  ['inline' => false]
+);
+
+echo $this->Html->script(
+  'https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js',
+  ['inline' => false]
+);
+
+echo $this->Html->script(
+  'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js',
+  ['inline' => false]
+);
+?>
 <?php echo $this->Html->script('http://html5shiv.googlecode.com/svn/trunk/html5.js', array( 'inline' => false ));?>
 <?php echo $this->Html->script('jquerytabchangecontents', array( 'inline' => false ));?>
 <?php echo $this->Html->css('card_index', null, array( 'inline' => false )); ?>
@@ -93,7 +108,7 @@ div#tabchangeContents div.tabchangeBox p.sample2 img {
 		<ul id="tabchange">
 <li><a href="#box1">覚醒</a></li>
 <li><a href="#box2">覚醒リンク</a></li>
-
+<li><a href="#box2">合体</a></li>
 </ul>
 
 
@@ -144,6 +159,47 @@ div#tabchangeContents div.tabchangeBox p.sample2 img {
 	</fieldset>
 <?php echo $this->Form->end(__('登録')); ?>
 </div>
+
+<div id="box3" class="tabchangeBox">
+
+<?php echo $this->Form->create('Psychic'); ?>
+	<fieldset>
+		<legend><?php echo __('新規合体'); ?></legend>
+	<?php
+		// echo '<label for="PsychicName">合体前([ctrl]ボタンを押しながら複数選択可)</label>'.$this->Form->select('fusion_s', $fusion_name, array( 'empty' => '以下より選択', 'label' => false, 'multiple' => true, 'size' =>
+		//  10)).'<br><br>';
+
+		echo '合体前';
+		echo $this->Form->select(
+			'fusion_s',
+			$fusion_name,
+			[
+				'empty' => '以下より選択',
+				'label' => false,
+				'multiple' => true,
+				'size' => 10,
+				'class' => 'fusion-select',
+				'style' => 'width:300px;'
+			]
+		);
+
+		echo '合体後';
+		echo $this->Form->select(
+			'fusion_l',
+			$fusion_name,
+			[
+				'empty' => '以下より選択',
+				'label' => false,
+				'multiple' => false,
+				'size' => 10,
+				'class' => 'fusion-select',
+				'style' => 'width:300px;'
+			]
+		);
+	?>
+	</fieldset>
+<?php echo $this->Form->end(__('登録')); ?>
+</div>
 </div>
 </section>
 
@@ -157,3 +213,14 @@ div#tabchangeContents div.tabchangeBox p.sample2 img {
 	</ul><br>
 	<?php echo $this->element('menu'); ?>
 </div>
+
+
+<script>
+$(function() {
+    $('.fusion-select').select2({
+        placeholder: "検索して選択",
+        allowClear: true,
+        width: '450px'
+    });
+});
+</script>

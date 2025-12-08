@@ -184,7 +184,7 @@ public $uses = array('Part','Pack','Link','Card','Psychic','Specie');
          $str .= $val['Card']['cost']."\t";
          $str .= $val['Card']['evolution']."\t";
          $str .= $val['Card']['effects']."\t";
-         $str .= $val['Card']['trigger']."\t\n";
+         $str .= $val['Card']['trigger']."\n";
        }
             /* サーバー移転による変更
        $dir_c = ROOT;
@@ -207,7 +207,7 @@ public $uses = array('Part','Pack','Link','Card','Psychic','Specie');
                                 'order' => 'id'));
        $str = "記述\n";
        foreach($card as $val){
-         $str .= $val['Card']['str']."\t\n";
+         $str .= $val['Card']['str']."\n";
        }
             /* サーバー移転による変更
        $dir_c2 = ROOT;
@@ -228,7 +228,7 @@ public $uses = array('Part','Pack','Link','Card','Psychic','Specie');
        
        // サイキックテキスト書き込み
        $psychic = $this->Psychic->find('all',array(
-                                'order' => 'id'));
+                                'order' => 'Psychic.id'));
        $str = "";
        foreach($psychic as $val){
          $psychic_s = explode(',',$val['Psychic']['psychic_s']);
@@ -264,7 +264,7 @@ public $uses = array('Part','Pack','Link','Card','Psychic','Specie');
        
        // サイキック対応表書き込み
        $psychic_list = $this->Psychic->find('all',array(
-                                'order' => 'id'));
+                                'order' => 'Psychic.id'));
        $str = "";
        foreach($psychic_list as $val){
 			$card_name = $this->Card->find('first',array(

@@ -8,12 +8,15 @@
 		</dd>
 		<dt><?php echo __('覚醒前'); ?></dt>
 		<dd>
-			<?php echo h($psychic['Psychic']['psychic_s']); ?>
+			<?php
+			$names = Hash::extract($psychic['CardSList'], '{n}.Card.name');
+			echo implode(', ', $names);
+			?>
 			&nbsp;
 		</dd>
 		<dt><?php echo __('覚醒後'); ?></dt>
 		<dd>
-			<?php echo h($psychic['Psychic']['psychic_l']); ?>
+			<?php echo h($psychic['CardL']['name']); ?>
 			&nbsp;
 		</dd>
 	</dl>

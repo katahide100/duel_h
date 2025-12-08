@@ -1,5 +1,18 @@
+<?php echo $this->Html->css('card_index', null, array( 'inline' => false )); ?>
+
 <div class="psychics index">
 	<h2><?php echo __('サイキック管理'); ?></h2>
+	<div class="form_search">
+    <?= $this->Form->create(null, ['type' => 'get', 'valueSources' => ['query'], 'class' => 'search-form']) ?>
+      <?= $this->Form->control('search_name', [
+          'label' => 'カード名で検索',
+          'placeholder' => 'カード名を入力',
+          'value' => isset($searchName) ? h($searchName) : ''
+      ]) ?>
+	  <?php echo $this->Form->submit('検索'); ?>
+      
+    <?= $this->Form->end() ?>
+  </div>
 	<table cellpadding="0" cellspacing="0">
 	<tr>
 			<th><?php echo $this->Paginator->sort('id'); ?></th>
@@ -10,8 +23,11 @@
 	<?php foreach ($psychics as $psychic): ?>
 	<tr>
 		<td><?php echo h($psychic['Psychic']['id']); ?>&nbsp;</td>
-		<td><?php echo h($psychic['Psychic']['psychic_s']); ?>&nbsp;</td>
-		<td><?php echo h($psychic['Psychic']['psychic_l']); ?>&nbsp;</td>
+		<td><?php
+		$names = Hash::extract($psychic['CardSList'], '{n}.Card.name');
+		echo implode(', ', $names);
+		?></td>
+		<td><?php echo h($psychic['CardL']['name']); ?>&nbsp;</td>
 		<td class="actions">
 			<?php echo $this->Html->link(__('詳細'), array('action' => 'view', $psychic['Psychic']['id'])); ?>
 			<?php echo $this->Html->link(__('編集'), array('action' => 'edit', $psychic['Psychic']['id'])); ?>

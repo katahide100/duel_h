@@ -1,5 +1,5 @@
 <head>
-<?php echo $this->Html->script('http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js', array( 'inline' => false ));?>
+<?php echo $this->Html->script('https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js', array( 'inline' => false ));?>
 <?php echo $this->Html->script('http://html5shiv.googlecode.com/svn/trunk/html5.js', array( 'inline' => false ));?>
 <?php echo $this->Html->script('jquerytabchangecontents', array( 'inline' => false ));?>
 <?php echo $this->Html->css('card_index', null, array( 'inline' => false )); ?>

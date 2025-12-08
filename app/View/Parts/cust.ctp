@@ -45,8 +45,9 @@ $hostName       = "https://manadream.net";          # ホスト名（node.jsな�
 $nodePort       = "3002";                           # node.jsのポート番号
 
 $chatNodePort   = "1337";                           # chatのnode.jsポート番号
-
+$newChatNodePort   = "3000";
 $chatNodeHost   = $hostName . ':' . $chatNodePort;  # chatのホスト
+$newChatNodeHost   = $hostName;  # 新chatのホスト
 
 $adsenseClickIpsFile = "./data/adsense_click_ips.txt";  # アドセンスをクリックしたIPアドレスファイル
 

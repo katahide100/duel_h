@@ -13,7 +13,7 @@
 		<td><?php echo h($pack['Pack']['id']); ?>&nbsp;</td>
 		<td><?php echo h($pack['Pack']['rank']); ?>&nbsp;</td>
 		<td>
-			<?php echo $this->Html->link($pack['Part']['part_name'], array('controller' => 'parts', 'action' => 'view', $pack['Part']['part_name'])); ?>
+			<?php echo $this->Html->link($pack['Part']['part_name'], array('controller' => 'parts', 'action' => 'view', $pack['Part']['id'])); ?>
 		</td>
 		<td><?php echo h($pack['Pack']['pack_name']); ?>&nbsp;</td>
 		<td class="actions">
