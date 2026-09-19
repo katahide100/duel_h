@@ -1,5 +1,6 @@
 <?php
 App::uses('AppController', 'Controller');
+App::uses('CardEffects', 'Lib');
 /**
  * Cards Controller
  *
@@ -148,16 +149,25 @@ class CardsController extends AppController {
 		if (!$this->Card->exists($id)) {
 			throw new NotFoundException(__('Invalid card'));
 		}
+		$options = array('conditions' => array('Card.' . $this->Card->primaryKey => $id));
+		$card = $this->Card->find('first', $options);
+		$this->set('kokas', $this->kokaList);
+		// 効果一覧に無い保存値はフォームで選べないので、表示だけして保存時に引き継ぐ
+		$this->set('unknownEffects', CardEffects::unknownTokens($card['Card']['effects'], $this->kokaList));
 		if ($this->request->is('post') || $this->request->is('put')) {
+			if (isset($this->request->data['Card']['effects'])) {
+				$this->request->data['Card']['effects'] = CardEffects::merge($this->request->data['Card']['effects'], $card['Card']['effects'], $this->kokaList);
+			}
 			if ($this->Card->save($this->request->data)) {
 				$this->Session->setFlash(__('The card has been saved'));
 				$this->redirect(array('action' => 'index'));
 			} else {
 				$this->Session->setFlash(__('The card could not be saved. Please, try again.'));
+				$this->request->data['Card']['effects'] = CardEffects::toSelected($this->request->data['Card']['effects'], $this->kokaList);
 			}
 		} else {
-			$options = array('conditions' => array('Card.' . $this->Card->primaryKey => $id));
-			$this->request->data = $this->Card->find('first', $options);
+			$this->request->data = $card;
+			$this->request->data['Card']['effects'] = CardEffects::toSelected($card['Card']['effects'], $this->kokaList);
 		}
 	}
 
@@ -222,7 +232,8 @@ class CardsController extends AppController {
 '33'=>'シールド・セイバー',
 '34'=>'シールド焼却',
 '35'=>'デッキ外カード',
-'36'=>'バトル開始時にバトルゾーンに置く'
+'36'=>'バトル開始時にバトルゾーンに置く',
+'37'=>'EXライフ'
 		);
 		
 

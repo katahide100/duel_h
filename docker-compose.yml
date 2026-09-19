@@ -1,0 +1,52 @@
+# ローカル開発用 (CakePHP 2.10 管理画面 + MariaDB)
+# 起動: docker compose up -d --build  →  http://localhost:8081  (local / local)
+#
+# 生成ファイル(action.pl / deck.cgi / cust.cgi)は '../../../cgi3' に書き出されるため、
+# 隣の ../cgi3 を /var/www/cgi3 にマウントしてローカルの cgi3 に反映させる。
+services:
+  web:
+    build: ./docker
+    ports:
+      - "8081:80"
+    volumes:
+      - ./:/var/www/duel_h
+      - ../cgi3:/var/www/cgi3
+    environment:
+      - DB_HOST=db
+      - DB_USER=duel
+      - DB_PASSWORD=duel
+      - DB_NAME=duel_h
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mariadb:10.6
+    command:
+      - --character-set-server=utf8
+      - --collation-server=utf8_general_ci
+      - --sql-mode=NO_AUTO_VALUE_ON_ZERO
+    ports:
+      - "3307:3306"
+    environment:
+      - MARIADB_ROOT_PASSWORD=root
+      - MARIADB_DATABASE=duel_h
+      - MARIADB_USER=duel
+      - MARIADB_PASSWORD=duel
+    volumes:
+      - db-data:/var/lib/mysql
+      # 初回起動時のみ番号順に実行される(再投入は docker compose down -v)
+      - ./app/Config/export_table_20140913.sql:/docker-entrypoint-initdb.d/01_table.sql:ro
+      - ./app/Config/export_data_20140913.sql:/docker-entrypoint-initdb.d/02_data.sql:ro
+      - ./docker/db/03_local_user.sql:/docker-entrypoint-initdb.d/03_local_user.sql:ro
+      - ./docker/db/04_schema_diff.sql:/docker-entrypoint-initdb.d/04_schema_diff.sql:ro
+      - ./docker/db/05_species_seed.sh:/docker-entrypoint-initdb.d/05_species_seed.sh:ro
+      - ../cgi3/syu.txt:/seed/syu.txt:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+volumes:
+  db-data:

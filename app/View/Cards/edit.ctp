@@ -10,7 +10,12 @@
 		echo $this->Form->input('power',array('label' => 'パワー(数値)'));
 		echo $this->Form->input('cost',array('label' => 'コスト(数値)'));
 		echo $this->Form->input('evolution',array('label' => '進化(数値)'));
-		echo $this->Form->input('effects',array('label' => '効果(数値)'));
+		echo '<label for="CardEffects">効果([ctrl]ボタンを押しながら複数選択可)</label>'.$this->Form->select('effects', $kokas, array( 'label' => false, 'multiple' => true, 'size' =>
+		 10));
+		if ($unknownEffects) {
+			echo '<p>一覧に無い効果値(そのまま保存されます): '.h(implode(',', $unknownEffects)).'</p>';
+		}
+		echo '<br><br>';
 		echo $this->Form->input('trigger',array('label' => 'トリガー(数値)'));
 		echo $this->Form->input('str',array('label' => '能力(文章)'));
 	?>
