@@ -11,6 +11,14 @@ docker compose down -v         # 停止 + DB 破棄 (次回起動時に初期デ
 - 管理画面: http://localhost:8081 （ログイン: `local` / `local`）
 - DB: `localhost:3307`（`duel` / `duel`, DB 名 `duel_h`, root パスワード `root`）
 
+## テスト
+
+PHPUnit は入れていないので、`app/Test/Standalone/` のスクリプトを php で直接実行する。
+
+```sh
+docker compose exec web php app/Test/Standalone/CsvConditionTest.php
+```
+
 ## 前提
 
 `duel_h` と同じ階層に `cgi3` があること。

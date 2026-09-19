@@ -1,5 +1,6 @@
 <?php
 App::uses('AppModel', 'Model');
+App::uses('CsvCondition', 'Lib');
 /**
  * Card Model
  *
@@ -62,33 +63,11 @@ class Card extends AppModel {
 	}
 	
 	public function orKindConditions( $data = array() ) {
-		$filter = $data['kind'];
-		$cond = array(
-			'AND' => array(
-				$this->alias . '.kind = \''.$filter.'\' OR '.$this->alias . '.kind LIKE \''.$filter. ',%'.'\' OR '.$this->alias . '.kind LIKE \'%,' . $filter . ',%\' OR '.$this->alias . '.kind LIKE \''. $filter . ',%\'' => ' ',
-				//$this->alias . '.kind LIKE' => '%,' . $filter . ',%',
-				//$this->alias . '.kind LIKE' => '%,' . $filter ,
-				//$this->alias . '.kind LIKE' =>  $filter . ',%'
-			),
-			
-
-		);
-
-		return $cond;
+		// 他の filterArgs の 'AND' と Set::merge で合成されるよう、数値キーで追加する
+		return array('AND' => array(CsvCondition::contains($this->alias . '.kind', $data['kind'])));
 	}
 	public function orEffectsConditions( $data = array() ) {
-		$filter = $data['effects'];
-		$cond = array(
-			'AND' => array(
-				$this->alias . '.effects = \''.$filter.'\' OR '.$this->alias . '.effects LIKE \''.$filter. ',%'.'\' OR '.$this->alias . '.effects LIKE \'%,' . $filter . ',%\' OR '.$this->alias . '.effects LIKE \''. $filter . ',%\'' => ' ',
-				//$this->alias . '.effects =' => '%' . $filter . '%',
-				//$this->alias . '.effects LIKE' => '%,' . $filter ,
-				//$this->alias . '.effects LIKE' =>  $filter . ',%',
-				//$this->alias . '.effects LIKE' => '%,' . $filter . ',%',
-
-			),
-		);
-		return $cond;
+		return array('AND' => array(CsvCondition::contains($this->alias . '.effects', $data['effects'])));
 	}
 
 	/*

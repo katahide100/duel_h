@@ -6,6 +6,7 @@
 services:
   web:
     build: ./docker
+    working_dir: /var/www/duel_h
     ports:
       - "8081:80"
     volumes:
