@@ -12,7 +12,11 @@ services:
     volumes:
       - ./:/var/www/duel_h
       - ../cgi3:/var/www/cgi3
+      # ゴッドリンク対応表(godLink.json)を duel-next へ直接書き出すためにマウントする
+      - ../duel-next:/var/www/duel-next
     environment:
+      # duel-next 用生成ファイルの出力先（本番は /var/www/duel_next/data）
+      - DUEL_NEXT_DATA_DIR=/var/www/duel-next/data
       - DB_HOST=db
       - DB_USER=duel
       - DB_PASSWORD=duel

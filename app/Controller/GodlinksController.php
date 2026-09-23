@@ -139,6 +139,10 @@ $this->request->data['Godlink']['god_name'] = $god_name;
         $file->close();
       }
 
+      // duel-next（Next.js 版）用の対応表も同時に書き出す。
+      // 出力先が無い・書けない場合でも action.pl の保存結果は壊さない。
+      $this->writeDuelNextGodLink($gods);
+
 /*
       $ftp = array(
         'ftp_server' => 'ftp.gmobb.jp',
@@ -172,6 +176,76 @@ $this->request->data['Godlink']['god_name'] = $god_name;
 }
 }
 */
+    }
+  }
+
+/**
+ * duel-next 用のゴッドリンク対応表（data/godLink.json）を書き出す。
+ *
+ * duel-next は手動シミュレーターで、リンクできる組み合わせをこの JSON で厳密に判定する。
+ * 出力先は app/Config/bootstrap.php の DuelNext.dataDir（環境変数 DUEL_NEXT_DATA_DIR）。
+ *
+ * @param array $gods Godlink->find('all') の結果
+ * @return void
+ */
+  private function writeDuelNextGodLink($gods) {
+    $dir = Configure::read('DuelNext.dataDir');
+    if (!is_dir($dir)) {
+      $this->Session->setFlash(__('duel-next の出力先が見つからないため godLink.json はスキップしました: %s', $dir));
+      return;
+    }
+
+    // カード名 → カードID（同名カードが複数あれば全てに同じ対応表を割り当てる）。
+    // 抽出条件は add() と同じ（ゴッド84 / ゴッド・ノヴァ136 でリンクを持つもの）。
+    $cards = $this->Card->query("SELECT id,name FROM cards WHERE kind LIKE '%84%' OR kind LIKE '%136%' AND str LIKE '%リンク%'");
+    $idsByName = array();
+    foreach ($cards as $card) {
+      $idsByName[$card['cards']['name']][] = (int)$card['cards']['id'];
+    }
+
+    $links = array();
+    $unknownNames = array();
+    foreach ($gods as $god) {
+      $name = $god['Godlink']['god_name'];
+      if (empty($idsByName[$name])) {
+        $unknownNames[] = $name;
+        continue;
+      }
+      // god_link は action.pl にそのまま差し込む Perl のリスト表記（例: "1713","2367-2450"）。
+      // クォートされたトークンを取り出す（クォート無しで登録された場合はカンマ区切りとして扱う）。
+      preg_match_all('/"([^"]*)"/', $god['Godlink']['god_link'], $matches);
+      $partners = array_values(array_filter($matches[1], 'strlen'));
+      if (empty($partners)) {
+        $partners = array();
+        foreach (explode(',', $god['Godlink']['god_link']) as $token) {
+          $token = trim($token, " \t\"'");
+          if ($token !== '') {
+            $partners[] = $token;
+          }
+        }
+      }
+      foreach ($idsByName[$name] as $id) {
+        $links[(string)$id] = array('name' => $name, 'partners' => $partners);
+      }
+    }
+
+    $json = json_encode(array(
+      'generatedAt' => date('c'),
+      'generatedFrom' => 'duel_h godlinks',
+      'links' => $links,
+    ), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+    $path = $dir . DS . 'godLink.json';
+    if (@file_put_contents($path, $json . "\n") === false) {
+      $this->Session->setFlash(__('godLink.json を書き込めませんでした（権限を確認してください）: %s', $path));
+      return;
+    }
+    @chmod($path, 0664);
+
+    if ($unknownNames) {
+      $this->Session->setFlash(__('godLink.json を出力しました（%d件）。カードが見つからない登録: %s', count($links), implode(', ', $unknownNames)));
+    } else {
+      $this->Session->setFlash(__('godLink.json を出力しました（%d件）', count($links)));
     }
   }
 }

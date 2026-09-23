@@ -111,3 +111,18 @@ CakeLog::config('error', array(
 Cache::config('default', array(
 'mask' => 0666,
 ));
+
+/**
+ * duel-next（Next.js 版）用の生成ファイル（godLink.json など）の出力先。
+ *
+ * 本番:     /var/www/duel_next/data（フォールバックの既定値）
+ * ローカル: docker-compose.yml の environment で DUEL_NEXT_DATA_DIR を渡す
+ *
+ * env() ではなく getenv() を使うのは、CakePHP 2 の env() が $_SERVER / $_ENV しか
+ * 見ず、php.ini の variables_order 次第で docker の environment を拾えないため
+ * （app/Config/database.php も同じ理由で getenv() を使っている）。
+ */
+Configure::write(
+	'DuelNext.dataDir',
+	getenv('DUEL_NEXT_DATA_DIR') ?: '/var/www/duel_next/data'
+);
