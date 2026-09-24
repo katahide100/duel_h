@@ -4,6 +4,8 @@
 <?php echo $this->Html->script('jquerytabchangecontents', array( 'inline' => false ));?>
 <?php echo $this->Html->css('card_index', null, array( 'inline' => false )); ?>
 <?php echo $this->Html->css('demo', null, array( 'inline' => false )); ?>
+<?php echo $this->Html->css('tagselect', null, array( 'inline' => false )); ?>
+<?php echo $this->Html->script('tagselect', array( 'inline' => false ));?>
 <?php echo $this->Html->script('googleanalytics', array( 'inline' => false ));?>
 
 <style>
@@ -118,7 +120,7 @@ div#tabchangeContents div.tabchangeBox p.sample2 img {
 		// 10)).'<br><br>';
 		echo $this->Form->input('power',array('label' => 'パワー(数値)'));
 		echo $this->Form->input('cost',array('label' => 'コスト(数値)'));
-		echo $this->Form->input('evolution',array('label' => '進化(数値)'));
+		echo $this->element('card_evolution_input', array('id' => 'Text', 'evolutions' => $evolutions));
 		echo $this->Form->input('effects',array('label' => '効果(数値)'));
 		echo $this->Form->input('trigger',array('label' => 'トリガー(数値)'));
 		echo $this->Form->input('str',array('label' => '能力(文章)'));
@@ -142,18 +144,18 @@ div#tabchangeContents div.tabchangeBox p.sample2 img {
 		echo $this->Form->input('name',array('label' => 'カード名'));
 				//echo $this->Form->input('civilization',array('label' => '文明(数値)'));
 		
-		echo '<label for="CardCivilization">文明([ctrl]ボタンを押しながら複数選択可)</label>'.$this->Form->select('civilization', $civilization, array( 'empty' => '以下より選択', 'label' => false, 'multiple' => true)).'<br><br>';
+		// 複数選択はタグ(バッジ)入力にする（webroot/js/tagselect.js）。
+		// JS が無効でも元の複数選択セレクトとして動く
+		echo '<label for="CardCivilization">文明（クリックで追加）</label>'.$this->Form->select('civilization', $civilization, array( 'label' => false, 'multiple' => true, 'data-tagselect' => 'true'));
 		//echo $this->Form->input('kind',array('label' => '種族(数値)'));
 		
-		echo '<label for="CardKind">種族([ctrl]ボタンを押しながら複数選択可)</label>'.$this->Form->select('kind', $syuList, array( 'empty' => '以下より選択', 'label' => false, 'multiple' => true, 'size' =>
-		 10)).'<br><br>';
+		echo '<label for="CardKind">種族（クリックで追加）</label>'.$this->Form->select('kind', $syuList, array( 'label' => false, 'multiple' => true, 'data-tagselect' => 'true'));
 		echo $this->Form->input('power',array('label' => 'パワー(数値)'));
 		echo $this->Form->input('cost',array('label' => 'コスト(数値)'));
-		echo $this->Form->input('evolution',array('label' => '進化(数値)'));
+		echo $this->element('card_evolution_input', array('id' => 'Select', 'evolutions' => $evolutions));
 		//echo $this->Form->input('effects',array('label' => '効果(数値)'));
 		
-		echo '<label for="CardEffects">効果([ctrl]ボタンを押しながら複数選択可)</label>'.$this->Form->select('effects', $kokas, array( 'empty' => '以下より選択', 'label' => false, 'multiple' => true, 'size' =>
-		 10)).'<br><br>';
+		echo '<label for="CardEffects">効果（クリックで追加）</label>'.$this->Form->select('effects', $kokas, array( 'label' => false, 'multiple' => true, 'data-tagselect' => 'true'));
 
 		echo $this->Form->input('trigger',array('label' => 'トリガー(数値)'));
 		echo $this->Form->input('str',array('label' => '能力(文章)'));

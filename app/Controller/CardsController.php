@@ -1,6 +1,7 @@
 <?php
 App::uses('AppController', 'Controller');
 App::uses('CardEffects', 'Lib');
+App::uses('CardEvolution', 'Lib');
 /**
  * Cards Controller
  *
@@ -117,8 +118,19 @@ class CardsController extends AppController {
 		$civilization = array( '0' => '光', '1' => '水', '2' => '闇', '3' => '火', '4' => '自然', '5' => 'ゼロ' );
 		$this->set('civilization', $civilization);
 		$this->set('kokas', $this->kokaList);
+		$this->set('evolutions', $this->evolutionList);
 		if ($this->request->is('post')) {
 			$this->Card->create();
+			// 進化はプルダウン + 「その他(手入力)」。手入力を選んだ時だけ evolution_raw を使う
+			if (isset($this->request->data['Card']['evolution'])) {
+				$this->request->data['Card']['evolution'] = CardEvolution::merge(
+					$this->request->data['Card']['evolution'],
+					isset($this->request->data['Card']['evolution_raw']) ? $this->request->data['Card']['evolution_raw'] : '',
+					'',
+					$this->evolutionList
+				);
+			}
+			unset($this->request->data['Card']['evolution_raw']);
 			// もし要素が配列であったら、','区切りの文字列に変換
 			if(is_array($this->request->data['Card']['kind'])){
 				$this->request->data['Card']['kind'] = implode( ',', $this->request->data['Card']['kind']);
@@ -152,9 +164,22 @@ class CardsController extends AppController {
 		$options = array('conditions' => array('Card.' . $this->Card->primaryKey => $id));
 		$card = $this->Card->find('first', $options);
 		$this->set('kokas', $this->kokaList);
+		$this->set('evolutions', $this->evolutionList);
+		// 進化一覧に無い保存値(複合値や入力ミス)はプルダウンで選べないので、
+		// 「その他(手入力)」+ 元の値を出して、そのまま保存できるようにする
+		$this->set('evolutionRaw', CardEvolution::isKnown($card['Card']['evolution'], $this->evolutionList) ? '' : $card['Card']['evolution']);
 		// 効果一覧に無い保存値はフォームで選べないので、表示だけして保存時に引き継ぐ
 		$this->set('unknownEffects', CardEffects::unknownTokens($card['Card']['effects'], $this->kokaList));
 		if ($this->request->is('post') || $this->request->is('put')) {
+			if (isset($this->request->data['Card']['evolution'])) {
+				$this->request->data['Card']['evolution'] = CardEvolution::merge(
+					$this->request->data['Card']['evolution'],
+					isset($this->request->data['Card']['evolution_raw']) ? $this->request->data['Card']['evolution_raw'] : '',
+					$card['Card']['evolution'],
+					$this->evolutionList
+				);
+			}
+			unset($this->request->data['Card']['evolution_raw']);
 			if (isset($this->request->data['Card']['effects'])) {
 				$this->request->data['Card']['effects'] = CardEffects::merge($this->request->data['Card']['effects'], $card['Card']['effects'], $this->kokaList);
 			}
@@ -168,6 +193,7 @@ class CardsController extends AppController {
 		} else {
 			$this->request->data = $card;
 			$this->request->data['Card']['effects'] = CardEffects::toSelected($card['Card']['effects'], $this->kokaList);
+			$this->request->data['Card']['evolution'] = CardEvolution::toSelected($card['Card']['evolution'], $this->evolutionList);
 		}
 	}
 
@@ -192,6 +218,33 @@ class CardsController extends AppController {
 		$this->redirect(array('action' => 'index'));
 	}*/
 	
+	/**
+	 * 進化種別一覧
+	 *
+	 * cgi3 の action.pl put_cre_chk が実装しているコード + NEO進化 / G-NEO進化。
+	 * duel-next(app/duel/evolution.ts の EVO)と cgi3(duel.pl の evo_norm)にも同じ表がある。
+	 * 増やす時は3箇所とも直すこと。
+	 *
+	 * cgi3 は NEO進化 / G-NEO進化 を進化として扱わない(通常クリーチャーとして出す)。
+	 */
+	public $evolutionList = array(
+		'1' => '通常進化（バトルゾーン・1体）',
+		'2' => '多色進化（バトルゾーン・1体）',
+		'3' => 'ドラゴン進化（バトルゾーン・1体）',
+		'4' => 'ギャラクシー・ボルテックス（バトルゾーン・3体）',
+		'5' => 'ボルテックス進化（バトルゾーン・2体）',
+		'6' => '進化V（バトルゾーン・2体）',
+		'7' => '文明進化V（バトルゾーン・2体）',
+		'8' => 'マナ進化（マナゾーン・1体）',
+		'9' => 'マナ進化V（マナゾーン・2体）',
+		'10' => 'マナ・ギャラクシー・ボルテックス（マナゾーン・3体）',
+		'11' => '墓地進化（墓地・1体）',
+		'12' => '墓地進化V（墓地・2体）',
+		'13' => '墓地・ギャラクシー・ボルテックス（墓地・3体）',
+		'14' => 'NEO進化（バトルゾーン・1体）',
+		'15' => 'G-NEO進化（バトルゾーン・1体）',
+	);
+
 	/**
 	 * 効果一覧
 	 *

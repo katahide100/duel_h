@@ -1,3 +1,8 @@
+<head>
+<?php echo $this->Html->css('tagselect', null, array( 'inline' => false )); ?>
+<?php echo $this->Html->script('tagselect', array( 'inline' => false ));?>
+</head>
+
 <div class="cards form">
 <?php echo $this->Form->create('Card'); ?>
 	<fieldset>
@@ -9,13 +14,22 @@
 		echo $this->Form->input('kind',array('label' => '種族(数値)'));
 		echo $this->Form->input('power',array('label' => 'パワー(数値)'));
 		echo $this->Form->input('cost',array('label' => 'コスト(数値)'));
-		echo $this->Form->input('evolution',array('label' => '進化(数値)'));
-		echo '<label for="CardEffects">効果([ctrl]ボタンを押しながら複数選択可)</label>'.$this->Form->select('effects', $kokas, array( 'label' => false, 'multiple' => true, 'size' =>
-		 10));
+		echo $this->element('card_evolution_input', array(
+			'id' => 'Edit',
+			'evolutions' => $evolutions,
+			'evolutionRaw' => $evolutionRaw,
+		));
+		// 複数選択はタグ(バッジ)入力にする（webroot/js/tagselect.js）。
+		// JS が無効でも元の複数選択セレクトとして動く
+		echo '<label for="CardEffects">効果（クリックで追加）</label>'.$this->Form->select('effects', $kokas, array( 'label' => false, 'multiple' => true, 'data-tagselect' => 'true'));
 		if ($unknownEffects) {
-			echo '<p>一覧に無い効果値(そのまま保存されます): '.h(implode(',', $unknownEffects)).'</p>';
+			// 一覧に無い効果値はフォームで選べないが、保存時に CardEffects::merge が引き継ぐ
+			echo '<p>一覧に無い効果値（そのまま保存されます）: ';
+			foreach ($unknownEffects as $unknownEffect) {
+				echo '<span class="tagselect-fixed">'.h($unknownEffect).'</span>';
+			}
+			echo '</p>';
 		}
-		echo '<br><br>';
 		echo $this->Form->input('trigger',array('label' => 'トリガー(数値)'));
 		echo $this->Form->input('str',array('label' => '能力(文章)'));
 	?>

@@ -1,0 +1,111 @@
+/* tagselect.js が作るタグ(バッジ)入力の見た目 */
+
+.tagselect {
+	position: relative;
+	margin-bottom: 12px;
+	max-width: 420px;
+}
+
+/* 元の <select multiple> は隠す（値の保持はこちらで行っている） */
+.tagselect .tagselect-source {
+	display: none;
+}
+
+.tagselect-box {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 4px;
+	min-height: 32px;
+	padding: 4px 6px;
+	background-color: #fff;
+	border: 1px solid #b5b5b5;
+	border-radius: 4px;
+	cursor: text;
+}
+
+.tagselect-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 2px 6px;
+	background-color: #3a2d4e;
+	color: #fff;
+	border-radius: 10px;
+	font-size: 12px;
+	line-height: 1.6;
+	white-space: nowrap;
+}
+
+.tagselect-remove {
+	padding: 0;
+	background: none;
+	border: none;
+	color: #fff;
+	font-size: 13px;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.tagselect-remove:hover {
+	color: #ffd0d0;
+}
+
+.tagselect-input {
+	flex: 1 1 120px;
+	min-width: 120px;
+	padding: 2px;
+	border: none;
+	outline: none;
+	font-size: 13px;
+}
+
+.tagselect-list {
+	display: none;
+	position: absolute;
+	z-index: 20;
+	left: 0;
+	right: 0;
+	margin: 2px 0 0;
+	padding: 0;
+	max-height: 220px;
+	overflow-y: auto;
+	list-style: none;
+	background-color: #fff;
+	border: 1px solid #b5b5b5;
+	border-radius: 4px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.tagselect.is-open .tagselect-list {
+	display: block;
+}
+
+.tagselect-item {
+	padding: 4px 8px;
+	font-size: 13px;
+	cursor: pointer;
+}
+
+.tagselect-item:hover,
+.tagselect-item.is-active {
+	background-color: #d3d3d3;
+}
+
+.tagselect-empty {
+	padding: 4px 8px;
+	font-size: 12px;
+	color: #777;
+}
+
+/* 一覧に無い値（フォームで選べないが保存時に引き継ぐ値）の表示 */
+.tagselect-fixed {
+	display: inline-flex;
+	align-items: center;
+	padding: 2px 6px;
+	margin-right: 4px;
+	background-color: #999;
+	color: #fff;
+	border-radius: 10px;
+	font-size: 12px;
+}
