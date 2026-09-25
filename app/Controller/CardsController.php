@@ -146,6 +146,9 @@ class CardsController extends AppController {
 				$this->redirect(array('action' => 'index'));
 			} else {
 				$this->Session->setFlash(__('The card could not be saved. Please, try again.'));
+				// 再表示時に進化プルダウンの選択が外れないよう、保存値から選択値に戻す
+				$this->set('evolutionRaw', CardEvolution::isKnown($this->request->data['Card']['evolution'], $this->evolutionList) ? '' : $this->request->data['Card']['evolution']);
+				$this->request->data['Card']['evolution'] = CardEvolution::toSelected($this->request->data['Card']['evolution'], $this->evolutionList);
 			}
 		}
 	}
@@ -189,6 +192,9 @@ class CardsController extends AppController {
 			} else {
 				$this->Session->setFlash(__('The card could not be saved. Please, try again.'));
 				$this->request->data['Card']['effects'] = CardEffects::toSelected($this->request->data['Card']['effects'], $this->kokaList);
+				// 再表示時に進化プルダウンの選択が外れないよう、保存値から選択値に戻す
+				$this->set('evolutionRaw', CardEvolution::isKnown($this->request->data['Card']['evolution'], $this->evolutionList) ? '' : $this->request->data['Card']['evolution']);
+				$this->request->data['Card']['evolution'] = CardEvolution::toSelected($this->request->data['Card']['evolution'], $this->evolutionList);
 			}
 		} else {
 			$this->request->data = $card;
