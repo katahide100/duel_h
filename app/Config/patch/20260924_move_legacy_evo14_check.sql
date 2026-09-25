@@ -19,7 +19,10 @@ WHERE TRIM(IFNULL(evolution, '')) IN ('14', '15')
 ORDER BY id;
 
 -- 進化コードの分布 (想定外の値が無いか)
-SELECT TRIM(IFNULL(evolution, '')) AS evolution, COUNT(*) AS cards
+-- ORDER BY は GROUP BY と同じ式にする。生の evolution 列で並べると
+-- sql_mode=only_full_group_by の環境(本番の MySQL)でエラー1055になる
+SELECT TRIM(IFNULL(evolution, '')) AS evolution_code, COUNT(*) AS cards
 FROM cards
 GROUP BY TRIM(IFNULL(evolution, ''))
-ORDER BY CAST(TRIM(IFNULL(evolution, '')) AS UNSIGNED), evolution;
+ORDER BY CAST(TRIM(IFNULL(evolution, '')) AS UNSIGNED),
+         TRIM(IFNULL(evolution, ''));

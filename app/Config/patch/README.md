@@ -25,18 +25,21 @@ docker exec -i duel_h-db-1 mysql -uduel -pduel duel_h < 20260924_move_legacy_evo
 接続情報は **サーバー上の `app/Config/database.php`（git 管理外）の `$default`** にある
 （`host` / `login` / `password` / `database`）。ここには書かない。
 
+DB は `duel_db`（接続ユーザー・パスワードは サーバー上の `app/Config/database.php` の `$default` を見る。
+ここには書かない）。日本語が化けないよう `--default-character-set=utf8` を付ける。
+
 ```sh
-cd /var/www/duel_h/app/Config/patch
+cd /var/www/duel_h
 
 # 1) 接続情報を読む（パスワードは表示されるので画面共有中は注意）
-grep -E "'(host|login|password|database)'" ../database.php
+grep -E "'(host|login|password|database)'" app/Config/database.php
 
 # 2) 念のため cards テーブルをバックアップ（パッチには rollback もあるが、実行前の状態を取っておく）
-mysqldump -h<host> -u<login> -p <database> cards > ~/cards_$(date +%Y%m%d_%H%M).sql
+mysqldump --default-character-set=utf8 -u root -p duel_db cards > ~/cards_$(date +%Y%m%d_%H%M).sql
 
 # 3) 事前確認 → 本体（-p の後はパスワードを対話入力する。コマンド行に書かない）
-mysql -h<host> -u<login> -p <database> < 20260924_move_legacy_evo14_check.sql
-mysql -h<host> -u<login> -p <database> < 20260924_move_legacy_evo14.sql
+mysql --default-character-set=utf8 -u root -p duel_db < app/Config/patch/20260924_move_legacy_evo14_check.sql
+mysql --default-character-set=utf8 -u root -p duel_db < app/Config/patch/20260924_move_legacy_evo14.sql
 ```
 
 `*_check.sql` の件数が想定（各パッチのヘッダーに記載）と合っていることを確認してから本体を流す。
@@ -44,6 +47,18 @@ mysql -h<host> -u<login> -p <database> < 20260924_move_legacy_evo14.sql
 
 本番は `mysql` クライアントが同じサーバーに無い場合もあるので、その時は
 `docker exec` / `ssh <db ホスト>` など環境に合わせて読み替える。
+
+### SQL を書く時の注意（本番の sql_mode）
+
+本番の MySQL は `only_full_group_by` が有効。`GROUP BY` した結果を並べる時は
+**`ORDER BY` も `GROUP BY` と同じ式**にすること（生の列名で並べると `ERROR 1055` で止まる）。
+ローカルの MariaDB は既定で有効ではないので、本番に合わせて確認する場合は先に流す:
+
+```sh
+docker exec -i duel_h-db-1 mysql -uduel -pduel duel_h <<'SQL'
+SET SESSION sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+SQL
+```
 
 **パッチを流しても `cgi3/card1.txt` / `card2.txt` は更新されない。**
 管理画面でカードを保存する（`PartsController` の書き出しが走る）か、手動で書き出す必要がある。
