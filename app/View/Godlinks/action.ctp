@@ -2489,9 +2489,10 @@ sub put_battle_zone_koka {
 sub sforth_chk {  # シールド・フォースの処理を行うカードか
   my ($cardno) = @_;
   # 【暫定対応 2026-09-19】EXライフ(効果37)は cgi3 では未実装のため、シールド・フォース(効果28)と同じ処理に流している。
-  # EXライフを本実装するときは、ここから 37 の判定を外して専用の処理に置き換えること。
+  # 【暫定対応 2026-10-01】エクストラEXライフ(効果38、2 枚シールド化する EXライフ)も同じく、シールド・フォースと同じ処理に流している。
+  # EXライフ／エクストラEXライフを本実装するときは、ここから 37・38 の判定を外して専用の処理に置き換えること。
   # (action.pl は duel_h の app/View/Godlinks/action.ctp から生成されるので、両方を同じ内容に保つこと)
-  return &k_chk($cardno, 28) || &k_chk($cardno, 37);
+  return &k_chk($cardno, 28) || &k_chk($cardno, 37) || &k_chk($cardno, 38);
 }
 
 sub sforth_sel {  # シールドフォースのシールドを選択
