@@ -367,6 +367,10 @@ public $uses = array('Part','Pack','Link','Card','Psychic','Specie');
          $file->close();
        }
 
+       // duel-next（Next.js 版）用のパック一覧も同時に書き出す。
+       // 出力先が無い・書けない場合でも cgi3 側の保存結果は壊さない。
+       $this->writeDuelNextPacks();
+
 
 //function FTPupload($ftp, $remote_file, $file)
 //{
@@ -510,7 +514,76 @@ $file = $dir_c2. DS. $files_c2;
 //}
 */
      }
-     
+
    }
-   
+
+/**
+ * duel-next 用のパック一覧（data/packs.json）を書き出す。
+ *
+ * cgi3 では deck.cgi のプルダウン（パート＝optgroup / パック＝option）と
+ * series.lib（パックID → カードID の配列）に分けてコードとして埋め込んでいるが、
+ * duel-next にはデッキ構築画面のパック絞り込み用に 1 つの JSON にまとめて渡す。
+ * 並び順は deck.cgi と同じ（パート rank → パック rank）。
+ * 出力先は app/Config/bootstrap.php の DuelNext.dataDir（環境変数 DUEL_NEXT_DATA_DIR）。
+ *
+ * @return void
+ */
+  private function writeDuelNextPacks() {
+    $dir = Configure::read('DuelNext.dataDir');
+    if (!is_dir($dir)) {
+      $this->Session->setFlash(__('duel-next の出力先が見つからないため packs.json はスキップしました: %s', $dir));
+      return;
+    }
+
+    // パックID → カードID の配列（カードID昇順）
+    $cardIdsByPack = array();
+    $links = $this->Link->find('all', array(
+      'recursive' => -1,
+      'fields' => array('Link.pack_id', 'Link.card_id'),
+      'order' => array('Link.card_id' => 'asc'),
+    ));
+    foreach ($links as $link) {
+      $cardIdsByPack[$link['Link']['pack_id']][] = (int)$link['Link']['card_id'];
+    }
+
+    $result = array();
+    $packCount = 0;
+    $parts = $this->Part->find('all', array('recursive' => -1, 'order' => array('Part.rank' => 'asc')));
+    foreach ($parts as $part) {
+      $packs = array();
+      $partPacks = $this->Pack->find('all', array(
+        'recursive' => -1,
+        'conditions' => array('Pack.part_id' => $part['Part']['id']),
+        'order' => array('Pack.rank' => 'asc'),
+      ));
+      foreach ($partPacks as $pack) {
+        $packId = $pack['Pack']['id'];
+        $packs[] = array(
+          'id' => (int)$packId,
+          'name' => $pack['Pack']['pack_name'],
+          'cardIds' => isset($cardIdsByPack[$packId]) ? array_values(array_unique($cardIdsByPack[$packId])) : array(),
+        );
+        $packCount++;
+      }
+      $result[] = array(
+        'id' => (int)$part['Part']['id'],
+        'name' => $part['Part']['part_name'],
+        'packs' => $packs,
+      );
+    }
+
+    $json = json_encode(array(
+      'generatedAt' => date('c'),
+      'generatedFrom' => 'duel_h parts',
+      'parts' => $result,
+    ), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+    $path = $dir . DS . 'packs.json';
+    if (@file_put_contents($path, $json . "\n") === false) {
+      $this->Session->setFlash(__('packs.json を書き込めませんでした（権限を確認してください）: %s', $path));
+      return;
+    }
+    @chmod($path, 0664);
+  }
+
 }
