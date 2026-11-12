@@ -633,7 +633,32 @@ $file = $dir_c2. DS. $files_c2;
       );
     }
 
+    // カードID は並び順（添字）なので、今より枚数が減ると以降のカードがずれ、全員のデッキが壊れる。
+    // duel-next は書き換えるとすぐ読み直す（再起動しない）ため、減る時は書かない。
+    // （DB を読めず 0 件だった時や、古いスナップショットの DB で動くローカルの duel_h でセーブした時など）
+    $current = $this->countDuelNextCards();
+    if (count($result) === 0 || count($result) < $current) {
+      $this->Session->setFlash(__('カードの枚数が今の cards.json より少ないため、cards.json は書き換えませんでした（今: %d 枚、セーブ: %d 枚）', $current, count($result)));
+      return;
+    }
+
     $this->writeDuelNextJson('cards.json', $result);
+  }
+
+/**
+ * 今の duel-next の cards.json のカード枚数（無ければ 0）。
+ * 8MB ほどあるので json_decode せず、各カードに 1 つずつある "discription": の数で数える
+ * （テキスト中の " は \" に書かれるので、テキストの中身とは一致しない）。
+ *
+ * @return int
+ */
+  private function countDuelNextCards() {
+    $path = Configure::read('DuelNext.dataDir') . DS . 'cards.json';
+    if (!is_file($path)) {
+      return 0;
+    }
+    $json = @file_get_contents($path);
+    return $json === false ? 0 : substr_count($json, '"discription":');
   }
 
 /**
@@ -666,6 +691,15 @@ $file = $dir_c2. DS. $files_c2;
     // syu.txt からの変換と同じく、末尾の空行は持たない
     while (!empty($names) && trim(end($names)) === '') {
       array_pop($names);
+    }
+
+    // 種族コードも添字なので、減る時は書かない（cards.json と同じ理由）
+    $currentPath = Configure::read('DuelNext.dataDir') . DS . 'raceNames.json';
+    $current = is_file($currentPath) ? json_decode((string)@file_get_contents($currentPath), true) : array();
+    $currentCount = is_array($current) ? count($current) : 0;
+    if (count($names) === 0 || count($names) < $currentCount) {
+      $this->Session->setFlash(__('種族の数が今の raceNames.json より少ないため、raceNames.json は書き換えませんでした（今: %d、セーブ: %d）', $currentCount, count($names)));
+      return;
     }
 
     $this->writeDuelNextJson('raceNames.json', $names);
@@ -702,8 +736,11 @@ $file = $dir_c2. DS. $files_c2;
 
     $path = $dir . DS . $fileName;
     $tmp = $path . '.tmp';
+    // rename で置き換えると権限も一時ファイルのものになるので、今のファイルの権限を引き継ぐ
+    // （cards.json などは duel-next の git で管理していて、権限が変わると git status に出るため）
+    $mode = is_file($path) ? (@fileperms($path) & 0777) : 0664;
     if (@file_put_contents($tmp, $json . "\n") !== false) {
-      @chmod($tmp, 0664);
+      @chmod($tmp, $mode ?: 0664);
       if (@rename($tmp, $path)) {
         return true;
       }
@@ -715,7 +752,6 @@ $file = $dir_c2. DS. $files_c2;
       $this->Session->setFlash(__('%s を書き込めませんでした（権限を確認してください）: %s', $fileName, $path));
       return false;
     }
-    @chmod($path, 0664);
     return true;
   }
 
