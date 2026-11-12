@@ -370,6 +370,10 @@ public $uses = array('Part','Pack','Link','Card','Psychic','Specie');
        // duel-next（Next.js 版）用のパック一覧も同時に書き出す。
        // 出力先が無い・書けない場合でも cgi3 側の保存結果は壊さない。
        $this->writeDuelNextPacks();
+       // カード情報（cards.json）と種族名（raceNames.json）も duel-next の形式で直接書き出す。
+       // 以前は duel-next の convert.mjs が cgi3 の card1.txt / card2.txt / syu.txt から変換していた。
+       $this->writeDuelNextCards();
+       $this->writeDuelNextRaceNames();
 
 
 //function FTPupload($ftp, $remote_file, $file)
@@ -584,6 +588,135 @@ $file = $dir_c2. DS. $files_c2;
       return;
     }
     @chmod($path, 0664);
+  }
+
+
+/**
+ * duel-next 用のカード情報（data/cards.json）を書き出す。
+ *
+ * 以前は cgi3 の card1.txt / card2.txt を duel-next の convert.mjs で変換していたが、
+ * 変換を挟まず最初から duel-next の形式で出す。中身は convert.mjs が作っていたものと同じ。
+ * - 配列の添字 = id = カードID（card1.txt の行番号と同じく、id 順に並べた何番目か）
+ * - cost / power は文字列のまま、evo は数値、abilities は効果番号の文字列の配列
+ *   （シールド・トリガー（トリガーに 1）は "99" を足す）、discription は効果文
+ * duel-next は更新日時を見て読み直すので、サーバーの再起動はいらない。
+ *
+ * @return void
+ */
+  private function writeDuelNextCards() {
+    $cards = $this->Card->find('all', array(
+      'recursive' => -1,
+      'fields' => array('Card.id', 'Card.name', 'Card.civilization', 'Card.kind', 'Card.power', 'Card.cost', 'Card.evolution', 'Card.effects', 'Card.trigger', 'Card.str'),
+      'order' => array('Card.id' => 'asc'),
+    ));
+
+    $result = array();
+    foreach ($cards as $i => $card) {
+      $c = $card['Card'];
+      // convert.mjs は '0' も値ありとして扱っていたので、PHP の empty() ではなく空文字で判定する
+      $effects = $this->trimForDuelNext($c['effects']);
+      $abilities = $effects !== '' ? explode(',', $effects) : array();
+      $trigger = $this->trimForDuelNext($c['trigger']);
+      if ($trigger !== '' && in_array('1', explode(',', $trigger), true)) {
+        $abilities[] = '99';
+      }
+      $result[] = array(
+        'id' => $i,
+        'name' => $this->trimForDuelNext($c['name']),
+        'civilization' => explode(',', $this->trimForDuelNext($c['civilization'])),
+        'race' => explode(',', $this->trimForDuelNext($c['kind'])),
+        'cost' => $this->trimForDuelNext($c['cost']),
+        'power' => $this->trimForDuelNext($c['power']),
+        'evo' => (int)$this->trimForDuelNext($c['evolution']),
+        'abilities' => $abilities,
+        'discription' => $this->trimForDuelNext($c['str']),
+      );
+    }
+
+    $this->writeDuelNextJson('cards.json', $result);
+  }
+
+/**
+ * convert.mjs（csv-parse の trim）と同じく、全角スペースなども前後から取り除く。
+ * PHP の trim() は全角スペースを残すため、「効果」が全角スペースだけのカードが
+ * 効果番号「　」を持つなど、convert.mjs の出力と変わってしまう。
+ *
+ * @param mixed $value
+ * @return string
+ */
+  private function trimForDuelNext($value) {
+    $value = (string)$value;
+    $trimmed = preg_replace('/^[\s\p{Z}\x{FEFF}]+|[\s\p{Z}\x{FEFF}]+$/u', '', $value);
+    // 文字コードが壊れていて正規表現が使えない時は通常の trim にする
+    return $trimmed === null ? trim($value) : $trimmed;
+  }
+
+/**
+ * duel-next 用の種族名一覧（data/raceNames.json。配列の添字 = 種族コード）を書き出す。
+ * cgi3 の syu.txt と同じ並び（species.no 順）。以前は convert.mjs が syu.txt から変換していた。
+ *
+ * @return void
+ */
+  private function writeDuelNextRaceNames() {
+    $species = $this->Specie->find('all', array('recursive' => -1, 'order' => 'no'));
+    $names = array();
+    foreach ($species as $val) {
+      $names[] = str_replace("\r", '', (string)$val['Specie']['species_name']);
+    }
+    // syu.txt からの変換と同じく、末尾の空行は持たない
+    while (!empty($names) && trim(end($names)) === '') {
+      array_pop($names);
+    }
+
+    $this->writeDuelNextJson('raceNames.json', $names);
+  }
+
+/**
+ * duel-next の出力先（DuelNext.dataDir）に JSON を書き出す。
+ *
+ * duel-next はサーバー稼働中に読み直すため、書きかけのファイルを読まないよう
+ * 一時ファイルに書いてから rename で置き換える。
+ * 出力先が無い・書けない場合でも cgi3 側の保存結果は壊さない（メッセージを出すだけ）。
+ *
+ * @param string $fileName 出力するファイル名
+ * @param array $data JSON にするデータ
+ * @return bool 書き出せたか
+ */
+  private function writeDuelNextJson($fileName, $data) {
+    $dir = Configure::read('DuelNext.dataDir');
+    if (!is_dir($dir)) {
+      $this->Session->setFlash(__('duel-next の出力先が見つからないため %s はスキップしました: %s', $fileName, $dir));
+      return false;
+    }
+
+    $options = JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES;
+    // 文字コードの壊れた文字が 1 つあっても全体を出せなくならないようにする（PHP 7.2 以降）
+    if (defined('JSON_INVALID_UTF8_SUBSTITUTE')) {
+      $options |= JSON_INVALID_UTF8_SUBSTITUTE;
+    }
+    $json = json_encode($data, $options);
+    if ($json === false) {
+      $this->Session->setFlash(__('%s を作れませんでした: %s', $fileName, json_last_error_msg()));
+      return false;
+    }
+
+    $path = $dir . DS . $fileName;
+    $tmp = $path . '.tmp';
+    if (@file_put_contents($tmp, $json . "\n") !== false) {
+      @chmod($tmp, 0664);
+      if (@rename($tmp, $path)) {
+        return true;
+      }
+      @unlink($tmp);
+    }
+    // フォルダに書けない（既存のファイルだけ書ける）環境では直接上書きする。
+    // duel-next は読めなかった時は前の内容を使い続けるので、書いている途中に読まれても壊れない
+    if (@file_put_contents($path, $json . "\n") === false) {
+      $this->Session->setFlash(__('%s を書き込めませんでした（権限を確認してください）: %s', $fileName, $path));
+      return false;
+    }
+    @chmod($path, 0664);
+    return true;
   }
 
 }
